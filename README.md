@@ -5,8 +5,6 @@
 * Supports document, video and audio file formats with caption support.
 
 ## Installation
-
-### Watch this video to create bot - https://youtu.be/dsuTn4qV2GA
 ### Easy Way
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
