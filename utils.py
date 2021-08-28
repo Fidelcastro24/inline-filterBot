@@ -2,36 +2,71 @@ import re
 import base64
 import logging
 from struct import pack
-
+from pyrogram.errors import UserNotParticipant
 from pyrogram.file_id import FileId
 from pymongo.errors import DuplicateKeyError
 from umongo import Instance, Document, fields
 from motor.motor_asyncio import AsyncIOMotorClient
 from marshmallow.exceptions import ValidationError
-
-from info import DATABASE_URI, DATABASE_NAME, COLLECTION_NAME, USE_CAPTION_FILTER
-
+import os
+import PTN
+import requests
+import json
+from info import DATABASE_URI, DATABASE_NAME, COLLECTION_NAME, USE_CAPTION_FILTER, AUTH_CHANNEL, API_KEY
+DATABASE_URI_2=os.environ.get('DATABASE_URI_2', DATABASE_URI)
+DATABASE_NAME_2=os.environ.get('DATABASE_NAME_2', DATABASE_NAME)
+COLLECTION_NAME_2="Posters"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 client = AsyncIOMotorClient(DATABASE_URI)
 db = client[DATABASE_NAME]
-instance = Instance(db)
+instance = Instance.from_db(db)
 
+IClient = AsyncIOMotorClient(DATABASE_URI_2)
+imdbdb=client[DATABASE_NAME_2]
+imdb=Instance.from_db(imdbdb)
 
 @instance.register
 class Media(Document):
     file_id = fields.StrField(attribute='_id')
-    file_ref = fields.StrField()
+    file_ref = fields.StrField(allow_none=True)
     file_name = fields.StrField(required=True)
     file_size = fields.IntField(required=True)
-    file_type = fields.StrField()
-    mime_type = fields.StrField()
-    caption = fields.StrField()
+    file_type = fields.StrField(allow_none=True)
+    mime_type = fields.StrField(allow_none=True)
+    caption = fields.StrField(allow_none=True)
 
     class Meta:
         collection_name = COLLECTION_NAME
 
+@imdb.register
+class Poster(Document):
+    imdb_id = fields.StrField(attribute='_id')
+    title = fields.StrField()
+    poster = fields.StrField()
+    year= fields.IntField(allow_none=True)
+
+    class Meta:
+        collection_name = COLLECTION_NAME_2
+
+async def save_poster(imdb_id, title, year, url):
+    try:
+        data = Poster(
+            imdb_id=imdb_id,
+            title=title,
+            year=int(year),
+            poster=url
+        )
+    except ValidationError:
+        logger.exception('Error occurred while saving poster in database')
+    else:
+        try:
+            await data.commit()
+        except DuplicateKeyError:
+            logger.warning("already saved in database")
+        else:
+            logger.info("Poster is saved in database")
 
 async def save_file(media):
     """Save file in database"""
@@ -47,14 +82,11 @@ async def save_file(media):
             file_size=media.file_size,
             file_type=media.file_type,
             mime_type=media.mime_type,
+            caption=media.caption.html if media.caption else None,
         )
     except ValidationError:
         logger.exception('Error occurred while saving file in database')
     else:
-        caption = media.caption
-        if caption:
-            file.caption = caption
-
         try:
             await file.commit()
         except DuplicateKeyError:
@@ -66,9 +98,13 @@ async def save_file(media):
 async def get_search_results(query, file_type=None, max_results=10, offset=0):
     """For given query return (results, next_offset)"""
 
-    raw_pattern = query.lower().strip().replace(' ', '.*')
-    if not raw_pattern:
+    query = query.strip()
+    if not query:
         raw_pattern = '.'
+    elif ' ' not in query:
+        raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
+    else:
+        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]')
 
     try:
         regex = re.compile(raw_pattern, flags=re.IGNORECASE)
@@ -98,6 +134,96 @@ async def get_search_results(query, file_type=None, max_results=10, offset=0):
     files = await cursor.to_list(length=max_results)
 
     return files, next_offset
+
+
+async def get_filter_results(query):
+    query = query.strip()
+    if not query:
+        raw_pattern = '.'
+    elif ' ' not in query:
+        raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
+    else:
+        raw_pattern = query.replace(' ', r'.*[\s\.\+\-_]')
+    try:
+        regex = re.compile(raw_pattern, flags=re.IGNORECASE)
+    except:
+        return []
+    filter = {'file_name': regex}
+    total_results = await Media.count_documents(filter)
+    cursor = Media.find(filter)
+    cursor.sort('$natural', -1)
+    files = await cursor.to_list(length=int(total_results))
+    return files
+
+async def get_file_details(query):
+    filter = {'file_id': query}
+    cursor = Media.find(filter)
+    filedetails = await cursor.to_list(length=1)
+    return filedetails
+
+
+async def is_subscribed(bot, query):
+    try:
+        user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
+    except UserNotParticipant:
+        pass
+    except Exception as e:
+        logger.exception(e)
+    else:
+        if not user.status == 'kicked':
+            return True
+
+    return False
+
+async def get_poster(movie):
+    extract = PTN.parse(movie)
+    try:
+        title=extract["title"]
+    except KeyError:
+        title=movie
+    try:
+        year=extract["year"]
+        year=int(year)
+    except KeyError:
+        year=None
+    if year:
+        filter = {'$and': [{'title': str(title).lower().strip()}, {'year': int(year)}]}
+    else:
+        filter = {'title': str(title).lower().strip()}
+    cursor = Poster.find(filter)
+    is_in_db = await cursor.to_list(length=1)
+    poster=None
+    if is_in_db:
+        for nyav in is_in_db:
+            poster=nyav.poster
+    else:
+        if year:
+            url=f'https://www.omdbapi.com/?s={title}&y={year}&apikey={API_KEY}'
+        else:
+            url=f'https://www.omdbapi.com/?s={title}&apikey={API_KEY}'
+        try:
+            n = requests.get(url)
+            a = json.loads(n.text)
+            if a["Response"] == 'True':
+                y = a.get("Search")[0]
+                v=y.get("Title").lower().strip()
+                poster = y.get("Poster")
+                year=y.get("Year")[:4]
+                id=y.get("imdbID")
+                await get_all(a.get("Search"))
+        except Exception as e:
+            logger.exception(e)
+            pass
+    return poster
+
+
+async def get_all(list):
+    for y in list:
+        v=y.get("Title").lower().strip()
+        poster = y.get("Poster")
+        year=y.get("Year")[:4]
+        id=y.get("imdbID")
+        await save_poster(id, v, year, poster)
 
 
 def encode_file_id(s: bytes) -> str:
