@@ -1,8 +1,10 @@
 {
-    "name": "Media Search bot",
-    "description": "When you going to send file on telegram channel/group this bot will save that in database, So you can search that easily in inline mode",
+    "name": "IMDB FILTER  bot",
+    "description": "When you going to send file on telegram channel this bot will save that in database, So you can search that easily in inline mode",
     "keywords": [
       "telegram",
+      "auto-filter",
+      "filter",
       "best",
       "indian",
       "pyrogram",
@@ -12,19 +14,19 @@
       "index",
       "inline"
     ],
-    "website": "https://github.com/Mahesh0253/Media-Search-bot",
-    "repository": "https://github.com/Mahesh0253/Media-Search-bot",
+    "website": "https://youtube.com/channel/UCO2HqhBLZ6G0c_8KAsSQuFA",
+    "repository": "https://github.com/sunaif-adkar2/inline-filterBot",
     "env": {
         "BOT_TOKEN": {
             "description": "Your bot token.",
             "value": ""
         },
         "API_ID": {
-            "description": "Get this value from https://my.telegram.org",
+            "description": "Get this value from https://my.telegram.org as @MT_MyTelegramOrg_BoT",
             "value": ""
         },
         "API_HASH": {
-            "description": "Get this value from https://my.telegram.org",
+            "description": "Get this value from https://my.telegram.org as @MT_MyTelegramOrg_BoT",
             "value": ""
         },
         "CHANNELS": {
@@ -32,22 +34,22 @@
             "value": ""
         },
         "ADMINS": {
-            "description": "Username or ID of Admin. Separate multiple Admins by space.",
+            "description": "Username or ID of Admin. Separate multiple Admins by space. @MT_ID_Bot",
             "value": ""
         },
         "AUTH_USERS": {
-            "description": "Username or ID of users to give access of inline search. Separate multiple users by space.\nLeave it empty if you don't want to restrict bot usage.",
+            "description": "Username or ID of users to give access of inline search. Separate multiple users by space.\nLeave it empty if you don't want to restrict bot usage. @MT_ID_Bot",
             "value": "",
             "required": false
         },
         "AUTH_CHANNEL": {
-            "description": "Username or ID of channel. Without subscribing this channel users cannot use bot.",
+            "description": "ID of channel.Make sure bot is admin in this channel. Without subscribing this channel users cannot use bot.",
             "value": "",
             "required": false
         },
-        "INVITE_MSG": {
-            "description": "Auth channel invitation message",
-            "value": "'Please join @.... to use this bot'",
+        "START_MSG": {
+            "description": "Welcome message for start command",
+            "value": "**Hi, I'm [Media Search Bot or you can call me as Auto-Filter Bot**\n\nHere you can search files in Inline mode as well as PM, Use the below buttons to search files or send me the name of file to search.",
             "required": false
         },
         "USE_CAPTION_FILTER": {
@@ -55,22 +57,32 @@
             "value": "False",
             "required": false
         },
+        "OMDB_API_KEY": {
+            "description": "Watch turtoils",
+            "value": "",
+            "required": false
+        },
+        "CUSTOM_FILE_CAPTION": {
+            "description": "A custom file caption for your files. formatable with , file_name, file_caption, file_size, Read Readme.md for better understanding.",
+            "value": "",
+            "required": false
+        },
+        "AUTH_GROUPS": {
+            "description": "ID of groups which bot should work as autofilter, bot can only work in thease groups. If not given , bot can be used in any group.",
+            "value": "",
+            "required": false
+        },
         "DATABASE_URI": {
-            "description": "mongoDB URI. Get this value from https://www.mongodb.com. For more help watch this video - https://youtu.be/dsuTn4qV2GA",
+            "description": "mongoDB URI. Get this value from https://www.mongodb.com. For more help watch turtoil",
             "value": ""
         },
         "DATABASE_NAME": {
-            "description": "Name of the database in mongoDB. For more help watch this video - https://youtu.be/dsuTn4qV2GA",
+            "description": "Name of the database in mongoDB. For more help watch turtoils",
             "value": ""
         },
         "COLLECTION_NAME": {
-            "description": "Name of the collections. Defaults to Telegram_files. If you are using the same database, then use different collection name for each bot",
-            "value": "Telegram_files",
-            "required": false
-        },
-        "MAX_RESULTS": {
-            "description": "Maximum limit for inline search results",
-            "value": "10",
+            "description": "Name of the collections. Defaults to Telegram_files. If you are using the same database, then use different collection name for each bot Telegram_files",
+            "value": "",
             "required": false
         },
         "CACHE_TIME": {
