@@ -123,7 +123,7 @@ async def group(client, message):
                 file_id = file.file_id
                 filename = f"[{get_size(file.file_size)}] {file.file_name}"
                 btn.append(
-                    [InlineKeyboardButton(text=f"{filename}", url=f"https://telegram.dog/{nyva}?start=subinps_-_-_-_{file_id}")]
+                    [InlineKeyboardButton(text=f"{filename}", url=f"https://telegram.dog/{nyva}?start=sunaif-adkar_-_-_-_{file_id}")]
                 )
         else:
             return
@@ -273,11 +273,11 @@ async def cb_handler(client: Client, query: CallbackQuery):
         elif query.data == "about":
             buttons = [
                 [
-                    InlineKeyboardButton('Update Channel', url='t.me/Mo_Tech_YT'),
+                    InlineKeyboardButton('Update Channel', url='https://t.me/sabotschannel'),
                     InlineKeyboardButton('Source Code', url=f'{TUTORIAL}')
                 ]
                 ]
-            await query.message.edit(text=f"<b>Developer : <a href='https://github.com/subinps'>SUBIN</a>\nLanguage : <code>Python3</code>\nLibrary : <a href='https://docs.pyrogram.org/'>Pyrogram asyncio</a>\nSource Code : <a href='{TUTORIAL}'>Click here</a>\nUpdate Channel : <a href='https://t.me/Mo_Tech_YT'>Mo Tech YT</a> </b>", reply_markup=InlineKeyboardMarkup(buttons), disable_web_page_preview=True)
+            await query.message.edit(text=f"<b>Developer : <a href='https://t.me/sunaif_adkar'>sunaif-adkar</a>\nLanguage : <code>Python3</code>\nLibrary : <a href='https://docs.pyrogram.org/'>Pyrogram asyncio</a>\nSource Code : <a href='{TUTORIAL}'>Click here</a>\nUpdate Channel : <a href='https://t.me/sabotschannel'>SaMods</a> </b>", reply_markup=InlineKeyboardMarkup(buttons), disable_web_page_preview=True)
 
 
 
@@ -298,7 +298,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     f_caption = f"{files.file_name}"
                 buttons = [
                     [
-                        InlineKeyboardButton('🖥️ How To Own 🖥️', url=f'{TUTORIAL}')
+                        InlineKeyboardButton('🌠 How To Own 🌠', url=f'{TUTORIAL}')
                     ]
                     ]
                 
@@ -329,7 +329,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     f_caption = f"{title}"
                 buttons = [
                     [
-                        InlineKeyboardButton('🖥️ How To Own 🖥️', url=f'{TUTORIAL}')
+                        InlineKeyboardButton('🌠 How To Own 🌠', url=f'{TUTORIAL}')
                     ]
                     ]
                 
