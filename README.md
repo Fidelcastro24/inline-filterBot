@@ -23,7 +23,7 @@
 ## Thanks to 
 * [Pyrogram](https://github.com/pyrogram/pyrogram)
 * Original [Repo](https://github.com/Mahesh0253/Media-Search-bot)
-*Fide Castro
+* Fidel Castro
 
 ## Support
 Contact Me On [Telegram](https://t.me/sunaif_adkar)
