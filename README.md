@@ -23,7 +23,7 @@
 ## Thanks to 
 * [Pyrogram](https://github.com/pyrogram/pyrogram)
 * Original [Repo](https://github.com/Mahesh0253/Media-Search-bot)
-
+*Fide Castro
 
 ## Support
 Contact Me On [Telegram](https://t.me/sunaif_adkar)
@@ -32,5 +32,3 @@ Contact Me On [Telegram](https://t.me/sunaif_adkar)
 
 ## License
 Code released under [The GNU General Public License](LICENSE).
-
-##Thanks To Fidel
