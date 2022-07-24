@@ -26,9 +26,9 @@
 * Fidel Castro
 
 ## Support
-Contact Me On [Telegram](https://t.me/sunaif_adkar)
+Contact Me On [Telegram](https://t.me/chinamodders)
 
-[Update Channel](https://t.me/sabotschannel)
+[Update Channel](https://t.me/fidelmods)
 
 ## License
 Code released under [The GNU General Public License](LICENSE).
